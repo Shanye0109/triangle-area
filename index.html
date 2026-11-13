@@ -1,656 +1,703 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>平行四边形 · 三角形面积与高</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            user-select: none;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: linear-gradient(145deg, #f7f9fc 0%, #e6ecf5 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, sans-serif;
-            padding: 20px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 48px;
-            padding: 30px 30px 40px 30px;
-            box-shadow: 0 30px 45px -20px rgba(0, 20, 40, 0.5),
-                        0 0 0 1px rgba(255, 255, 255, 0.7) inset;
-            transition: all 0.2s;
-        }
-
-        .title {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-weight: 500;
-            font-size: 2rem;
-            letter-spacing: -0.02em;
-            color: #1e2b3c;
-            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
-        }
-
-        .title span {
-            background: linear-gradient(135deg, #2b5876, #4e4376);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 600;
-        }
-
-        .canvas-wrapper {
-            background: #ffffffd9;
-            border-radius: 36px;
-            padding: 16px;
-            box-shadow: 0 10px 25px -8px rgba(0, 20, 40, 0.3),
-                        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
-        }
-
-        canvas {
-            display: block;
-            width: 900px;
-            height: 500px;
-            border-radius: 24px;
-            background: #fefefe;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-            cursor: grab;
-            touch-action: none;
-        }
-
-        canvas:active {
-            cursor: grabbing;
-        }
-
-        .hint {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-top: 18px;
-            font-size: 0.9rem;
-            color: #2d4055;
-            flex-wrap: wrap;
-        }
-
-        .hint-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #ffffffb0;
-            padding: 6px 14px;
-            border-radius: 60px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-            backdrop-filter: blur(4px);
-            border: 1px solid #ffffffd0;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 20px;
-            background: #1e88e5;
-        }
-
-        .dot.orange { background: #ff8f2e; }
-        .dot.purple { background: #9c27b0; }
-        .dot.small { width: 10px; height: 10px; }
-        .dot.green { background: #2e7d32; }
-        .dot.brown { background: #b85c00; }
-
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-top: 12px;
-            font-size: 0.9rem;
-            color: #3e4a5b;
-        }
-
-        .legend span {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .legend-swatch {
-            width: 20px;
-            height: 12px;
-            background: #5a7fb0;
-            opacity: 0.3;
-            border-radius: 4px;
-            border: 1px dashed #2b4b6e;
-        }
-
-        .legend-swatch.h {
-            width: 20px;
-            height: 2px;
-            background: #d32f2f;
-            opacity: 0.8;
-            border: none;
-            border-radius: 2px;
-        }
-
-        .formula-bar {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 18px;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #1e2b3c;
-            flex-wrap: wrap;
-            background: #ffffffb0;
-            padding: 12px 24px;
-            border-radius: 40px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-            backdrop-filter: blur(4px);
-            border: 1px solid #ffffffd0;
-        }
-
-        .formula-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding: 4px 8px;
-            background: #f0f5ff;
-            border-radius: 30px;
-            padding: 6px 16px;
-            font-size: 0.95rem;
-        }
-
-        .formula-item .tri-label {
-            font-weight: 600;
-            margin-right: 4px;
-        }
-
-        .formula-item .value {
-            font-weight: 600;
-            color: #0d47a1;
-            margin-left: 4px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>几何实验室 · 平行四边形与三角形的高与面积</title>
+  <style>
+    :root {
+      --ink: #25334a;
+      --muted: #758197;
+      --line: #e5eaf1;
+      --blue: #5276df;
+      --teal: #168f88;
+      --amber: #c7892b;
+      --purple: #8c68b6;
+      --paper: #ffffff;
+      --radius: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: #f3f6fa;
+      font-synthesis: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 300px; }
+    button, select, input { font: inherit; }
+    button, select { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    button:disabled { cursor: default; opacity: .35; }
+    button, select { touch-action: manipulation; }
+    button:focus-visible, select:focus-visible, canvas:focus-visible, input:focus-visible + span {
+      outline: 3px solid #87a7f3; outline-offset: 4px;
+    }
+    svg { flex: none; }
+    .app { max-width: 1440px; margin: 0 auto; padding: 28px 32px 24px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 13px; color: #fff; background: #29465b; }
+    .brand-name { font-size: 15px; font-weight: 700; letter-spacing: .06em; }
+    .brand-caption { display: block; margin-top: 3px; font-size: 10px; color: #8b95a7; letter-spacing: .18em; }
+    .header-actions { display: flex; gap: 10px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #dce3ec; border-radius: 10px; background: #fff; color: #526078; padding: 10px 15px; min-height: 42px; font-size: 13px; font-weight: 600; transition: background-color .15s, border-color .15s; }
+    .button:hover { background: #f6f8fc; border-color: #b9c7dc; }
+    .button.primary { color: #fff; background: #2e4c60; border-color: #2e4c60; }
+    .button.primary:hover { background: #243e51; }
+    .intro { padding: 29px 0 23px; }
+    .eyebrow { font-size: 11px; letter-spacing: .1em; font-weight: 700; color: var(--teal); margin-bottom: 9px; }
+    h1 { font-size: clamp(23px, 2.4vw, 32px); margin: 0; font-weight: 700; letter-spacing: -.035em; line-height: 1.35; }
+    .subtitle { font-size: 14px; line-height: 1.8; margin: 10px 0 0; color: var(--muted); }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 304px; gap: 20px; align-items: start; }
+    .panel { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 5px 20px #273b5a04; min-width: 0; }
+    .stage-panel { overflow: hidden; }
+    .stage-toolbar { padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; gap: 14px; border-bottom: 1px solid #edf0f5; }
+    .section-title { margin: 0; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 9px; white-space: nowrap; }
+    .section-index { color: #9aa5b6; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .toggles { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .toggle { position: relative; display: inline-flex; cursor: pointer; user-select: none; }
+    .toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .toggle span { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: #7d889a; padding: 7px 9px; border-radius: 7px; border: 1px solid transparent; }
+    .toggle span::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #c3cbd6; }
+    .toggle input:checked + span { color: #41665f; background: #eff7f5; border-color: #e2eeeb; }
+    .toggle input:checked + span::before { background: #319789; }
+    .board-wrap { margin: 0; padding: 8px 12px 0; background: #fff; }
+    /* 画布大小只由容器决定，数值位数变化不会改变布局。 */
+    #board { display: block; width: 100%; height: auto; min-height: 420px; aspect-ratio: 12 / 7; background: #fff; touch-action: none; user-select: none; -webkit-user-select: none; outline-offset: -4px; }
+    #board.is-dragging { cursor: grabbing; }
+    .canvas-caption { display: flex; justify-content: space-between; gap: 12px; padding: 0 22px 15px; color: #939daf; font-size: 11px; line-height: 1.6; }
+    .canvas-caption span:last-child { white-space: nowrap; }
+    .point-controls { background: #fafbfd; border-top: 1px solid #edf0f5; padding: 13px 20px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .point-controls label { font-size: 12px; color: #728096; }
+    #pointSelect { color: #344965; border: 1px solid #dce3ed; background: #fff; border-radius: 8px; min-height: 36px; padding: 5px 27px 5px 10px; font-size: 13px; max-width: 185px; }
+    .nudge-group { display: flex; gap: 4px; }
+    .nudge { width: 34px; height: 34px; border-radius: 7px; display: grid; place-items: center; border: 1px solid #e1e7ef; background: #fff; color: #687991; }
+    .nudge:not(:disabled):hover { background: #edf3fb; color: #305284; }
+    .keyboard-tip { margin-left: auto; color: #99a2b1; font-size: 11px; }
+    .status { font-size: 12px; line-height: 1.65; min-height: 40px; margin: 0; padding: 9px 22px 11px; color: #7a879a; border-top: 1px solid #f0f3f7; }
+    .legend { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; padding: 20px 5px 0; }
+    .legend-item { display: flex; align-items: flex-start; gap: 8px; min-width: 0; }
+    .legend-dot { flex: 0 0 auto; margin-top: 4px; width: 8px; height: 8px; border: 2px solid currentColor; border-radius: 50%; }
+    .legend-item strong { font-size: 12px; font-weight: 600; display: block; line-height: 1.5; }
+    .legend-item small { font-size: 11px; color: #8a95a6; line-height: 1.7; display: block; margin-top: 3px; }
+    .sidebar { padding: 21px; }
+    .sidebar-heading { display: flex; justify-content: space-between; gap: 8px; align-items: center; margin-bottom: 20px; }
+    .live-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: #75988e; }
+    .live-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #5aa894; }
+    .height-metric { display: flex; justify-content: space-between; align-items: center; background: #f6f8fb; padding: 14px; border-radius: 11px; }
+    .height-metric .label { color: #74839a; font-size: 12px; }
+    .height-metric .identity { color: #9aa4b3; font-size: 11px; margin-top: 6px; }
+    .metric-value { font-size: 23px; font-weight: 700; letter-spacing: -.04em; color: #415671; }
+    .metric-value small { font-size: 10px; color: #99a3b2; font-weight: 400; letter-spacing: 0; margin-left: 4px; }
+    .number { font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+    .formula-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; margin-top: 8px; }
+    .triangle-row { padding: 17px 0 16px; border-bottom: 1px solid #edf0f5; min-width: 0; }
+    .triangle-head { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; }
+    .triangle-symbol { width: 16px; height: 16px; }
+    .triangle-name { font-size: 12px; font-weight: 600; }
+    .triangle-points { margin-left: auto; font-size: 11px; font-weight: 500; color: #9aa3b2; }
+    .triangle-result { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 6px; }
+    .formula { color: #8791a1; font-size: 12px; line-height: 1.8; }
+    .base-value { font-size: 11px; color: #8e99a9; margin-top: 3px; }
+    .area-value { font-size: clamp(20px, 1.8vw, 24px); letter-spacing: -.04em; font-weight: 650; }
+    .area-unit { display: block; text-align: right; color: #a4acb8; font-size: 9px; margin-top: 4px; }
+    .sum-card { background: #2d485a; border-radius: 12px; padding: 16px; margin-top: 18px; color: #fff; }
+    .sum-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 11px; color: #c5d3dc; }
+    .ratio { font-size: 10px; background: #ffffff17; border: 1px solid #ffffff1b; padding: 3px 7px; border-radius: 5px; color: #d4e4eb; }
+    .sum-number { margin-top: 10px; font-size: 29px; letter-spacing: -.035em; font-weight: 650; }
+    .sum-number small { font-size: 10px; letter-spacing: 0; font-weight: 400; color: #b3c5d1; margin-left: 5px; }
+    .segments { display: flex; gap: 3px; height: 5px; margin: 14px 0 10px; border-radius: 3px; overflow: hidden; }
+    .segments span { min-width: 0; }
+    .sum-foot { font-size: 10px; line-height: 1.6; color: #b5c7d2; }
+    .precision-note { color: #a2aab7; font-size: 10px; line-height: 1.7; margin: 13px 0 0; }
+    .insight { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.15fr); gap: 30px; margin-top: 26px; padding: 21px 25px; border: 1px solid #e3eae9; border-radius: 14px; background: #edf4f2; }
+    .insight-title { color: #44746a; font-size: 12px; font-weight: 700; margin: 0 0 7px; display: flex; align-items: center; gap: 7px; }
+    .insight p { font-size: 12px; color: #7a938c; line-height: 1.85; margin: 0; }
+    .insight-equation { color: #477267 !important; font-size: 14px !important; font-weight: 600; letter-spacing: .01em; }
+    .footer { display: flex; justify-content: space-between; gap: 16px; padding: 20px 2px 0; color: #a0a9b7; font-size: 10px; line-height: 1.6; }
+    .toast { position: fixed; z-index: 10; left: 50%; bottom: 24px; transform: translateX(-50%); max-width: calc(100vw - 32px); padding: 12px 18px; border-radius: 10px; color: #fff; background: #2d485af5; box-shadow: 0 6px 25px #243b5020; font-size: 12px; line-height: 1.6; text-align: center; }
+    .toast[hidden] { display: none; }
+    .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    @media (min-width: 1441px) { .app { padding-top: 35px; } }
+    @media (max-width: 1100px) { .app { padding: 22px; } .workspace { grid-template-columns: minmax(0, 1fr) 278px; gap: 16px; } .sidebar { padding: 17px; } .stage-toolbar { padding: 16px; flex-wrap: wrap; } .keyboard-tip { display: none; } .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 900px) { .workspace { grid-template-columns: minmax(0, 1fr); } .sidebar { padding: 22px; } .formula-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; } .triangle-result { grid-template-columns: minmax(0, 1fr); gap: 10px; } .area-unit { display: inline; margin-left: 5px; } .height-metric { max-width: 360px; } .legend { grid-template-columns: repeat(4, minmax(0, 1fr)); padding-bottom: 6px; } .sum-card { display: block; } .area-value { font-size: 24px; } }
+    @media (max-width: 620px) {
+      .app { padding: 18px 14px; }
+      .topbar { align-items: center; gap: 10px; }
+      .brand { gap: 8px; } .brand-mark { width: 35px; height: 35px; border-radius: 10px; } .brand-name { font-size: 13px; } .brand-caption { font-size: 8px; letter-spacing: .12em; }
+      .header-actions { gap: 6px; } .button { padding: 8px 10px; min-height: 38px; font-size: 11px; gap: 5px; } .button svg { width: 14px; height: 14px; }
+      .intro { padding: 25px 1px 18px; } h1 { font-size: 23px; } .subtitle { font-size: 12px; margin-top: 8px; } .eyebrow { font-size: 10px; }
+      .stage-toolbar { padding: 14px; gap: 12px; } .toggles { gap: 3px; } .toggle span { padding: 7px 8px; }
+      .board-wrap { padding: 0 4px; } #board { min-height: 330px; aspect-ratio: 6 / 5; }
+      .canvas-caption { padding: 0 14px 13px; gap: 8px; font-size: 10px; } .canvas-caption span:last-child { display: none; }
+      .point-controls { padding: 12px; gap: 8px; } .point-controls label { font-size: 11px; } #pointSelect { max-width: 155px; min-height: 38px; font-size: 12px; } .nudge-group { gap: 4px; } .nudge { width: 37px; height: 38px; }
+      .status { padding: 10px 14px; min-height: 58px; font-size: 11px; }
+      .legend { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 17px 2px 4px; gap: 15px; } .legend-item small { font-size: 10px; }
+      .sidebar { padding: 19px; } .formula-list { grid-template-columns: minmax(0, 1fr); gap: 0; } .triangle-result { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; } .area-unit { display: block; } .height-metric { max-width: none; }
+      .insight { grid-template-columns: minmax(0, 1fr); gap: 18px; margin-top: 18px; padding: 19px; } .insight-equation { font-size: 13px !important; }
+      .footer { flex-wrap: wrap; gap: 4px; padding-top: 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; } }
+    @media (max-width: 380px) { .topbar { flex-wrap: wrap; } .header-actions { margin-left: auto; } }
+    @media print { body { background: #fff; } .app { max-width: none; padding: 0; } .header-actions, .toggles, .point-controls, .status, .toast { display: none; } .workspace { grid-template-columns: minmax(0, 1fr) 260px; } .panel { box-shadow: none; } .insight { break-inside: avoid; } }
+  </style>
 </head>
 <body>
-    <div class="card">
-        <h1 class="title">🔷 <span>平行四边形</span> 与 <span>三角形</span> 的高与面积</h1>
-        <div class="canvas-wrapper">
-            <canvas id="board" width="900" height="500"></canvas>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><svg width="27" height="27" viewBox="0 0 28 28" fill="none"><path d="M8 6H24L19 22H3L8 6Z" stroke="currentColor" stroke-width="1.6"/><path d="M8 6L12 22L24 6M12 22L19 22" stroke="#95d7c8" stroke-width="1.5"/><circle cx="8" cy="6" r="2" fill="#fff"/><circle cx="12" cy="22" r="2" fill="#95d7c8"/></svg></div>
+        <div><div class="brand-name">几何实验室</div><span class="brand-caption">GEOMETRY LAB</span></div>
+      </div>
+      <div class="header-actions">
+        <button class="button" id="resetBtn" type="button" title="恢复初始图形"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10a8 8 0 1 1 1.8 7.2M4 4v6h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>重置图形</button>
+        <button class="button primary" id="exportBtn" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>保存图片</button>
+      </div>
+    </header>
+
+    <section class="intro" aria-labelledby="pageTitle">
+      <div class="eyebrow">数学探索 / 高与面积</div>
+      <h1 id="pageTitle">平行四边形与三角形</h1>
+      <p class="subtitle">拖动一个点，看看哪些数值变了，哪些关系始终不变。</p>
+    </section>
+
+    <div class="workspace">
+      <div>
+        <section class="panel stage-panel" aria-labelledby="stageTitle">
+          <div class="stage-toolbar">
+            <h2 class="section-title" id="stageTitle"><span class="section-index">01</span>交互画布</h2>
+            <div class="toggles" aria-label="画布显示选项">
+              <label class="toggle"><input id="showFill" type="checkbox" checked><span>阴影</span></label>
+              <label class="toggle"><input id="showHeights" type="checkbox" checked><span>高线</span></label>
+              <label class="toggle"><input id="showValues" type="checkbox" checked><span>数值</span></label>
+              <label class="toggle"><input id="showGrid" type="checkbox" checked><span>网格</span></label>
+            </div>
+          </div>
+          <figure class="board-wrap">
+            <canvas id="board" width="960" height="560" tabindex="0" role="group" aria-label="可拖动的几何画布。可用下方菜单选择顶点，再按方向键微调。" aria-describedby="interactionStatus keyboardHelp">你的浏览器不支持 Canvas。请使用支持 Canvas 的现代浏览器查看互动图形。</canvas>
+          </figure>
+          <div class="canvas-caption"><span>拖动圆点或字母标签；重合时可在下方选择操作点。</span><span>长度：演示单位</span></div>
+          <div class="point-controls">
+            <label for="pointSelect">操作点</label>
+            <select id="pointSelect" aria-label="选择要操作的点">
+              <option value="X" selected>X · 上边顶点</option><option value="Y">Y · 上边顶点</option><option value="Z">Z · 上边顶点</option>
+              <option value="A">A · 上边左端</option><option value="B">B · 上边右端</option>
+              <option value="C">C · 底边左端</option><option value="D">D · 底边右端</option>
+              <option value="E">E · 底边分点</option><option value="F">F · 底边分点</option>
+            </select>
+            <div class="nudge-group" role="group" aria-label="微调所选点">
+              <button class="nudge" type="button" id="nudgeLeft" aria-label="向左微调" title="向左移动 2 单位"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="nudge" type="button" id="nudgeRight" aria-label="向右微调" title="向右移动 2 单位"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="nudge" type="button" id="nudgeUp" aria-label="向上微调" title="向上移动 2 单位"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 14 6-6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <button class="nudge" type="button" id="nudgeDown" aria-label="向下微调" title="向下移动 2 单位"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 10 6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </div>
+            <span class="keyboard-tip" id="keyboardHelp">画布聚焦后，方向键微调 · Shift 加速</span>
+          </div>
+          <p class="status" id="interactionStatus" role="status" aria-live="polite">已选择 X：沿上边滑动，可与其他顶点或端点重合。</p>
+        </section>
+        <div class="legend" aria-label="拖动说明">
+          <div class="legend-item" style="color:#4d7299"><span class="legend-dot"></span><div><strong>上边 A / B</strong><small>联动平移，改变高度和倾斜</small></div></div>
+          <div class="legend-item" style="color:#6e819b"><span class="legend-dot"></span><div><strong>底边 C / D</strong><small>水平伸缩，上下边始终等长</small></div></div>
+          <div class="legend-item" style="color:#168f88"><span class="legend-dot"></span><div><strong>分点 E / F</strong><small>调整三段底边的长度</small></div></div>
+          <div class="legend-item" style="color:#8c68b6"><span class="legend-dot"></span><div><strong>顶点 X / Y / Z</strong><small>沿上边滑动，观察面积不变</small></div></div>
         </div>
-        <div class="hint">
-            <div class="hint-item"><span class="dot" style="background:#1565c0;"></span> A,B (上边，可联动拖动)</div>
-            <div class="hint-item"><span class="dot orange"></span> C,D (底边，可联动水平拖动)</div>
-            <div class="hint-item"><span class="dot green"></span> E,F (底边内滑动)</div>
-            <div class="hint-item"><span class="dot brown"></span> X,Y,Z (仅在AB上滑动，可与A/B重合)</div>
+      </div>
+
+      <aside class="panel sidebar" aria-labelledby="resultsTitle">
+        <div class="sidebar-heading"><h2 class="section-title" id="resultsTitle"><span class="section-index">02</span>实时计算</h2><span class="live-badge">同步更新</span></div>
+        <div class="height-metric"><div><div class="label">公共高度 h</div><div class="identity">h₁ = h₂ = h₃</div></div><div class="metric-value"><span id="heightValue" class="number">250.0</span><small>单位</small></div></div>
+        <!-- 公式节点只创建一次，拖动时仅更新 textContent。 -->
+        <div class="formula-list" id="formulaBar">
+          <article class="triangle-row" style="color:var(--blue)">
+            <div class="triangle-head"><svg class="triangle-symbol" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3 18 17H2Z" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="1.5"/></svg><span class="triangle-name">三角形 1</span><span class="triangle-points" id="triangleName0">△XCE</span></div>
+            <div class="triangle-result"><div><div class="formula">S₁ = ½ × L₁ × h</div><div class="base-value">底边 L₁ = <span id="lengthValue0" class="number">156.0</span></div></div><div><span class="area-value number" id="areaValue0">19,500.0</span><small class="area-unit">平方单位</small></div></div>
+          </article>
+          <article class="triangle-row" style="color:var(--teal)">
+            <div class="triangle-head"><svg class="triangle-symbol" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3 18 17H2Z" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="1.5"/></svg><span class="triangle-name">三角形 2</span><span class="triangle-points" id="triangleName1">△YEF</span></div>
+            <div class="triangle-result"><div><div class="formula">S₂ = ½ × L₂ × h</div><div class="base-value">底边 L₂ = <span id="lengthValue1" class="number">208.0</span></div></div><div><span class="area-value number" id="areaValue1">26,000.0</span><small class="area-unit">平方单位</small></div></div>
+          </article>
+          <article class="triangle-row" style="color:var(--amber)">
+            <div class="triangle-head"><svg class="triangle-symbol" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3 18 17H2Z" fill="currentColor" fill-opacity=".14" stroke="currentColor" stroke-width="1.5"/></svg><span class="triangle-name">三角形 3</span><span class="triangle-points" id="triangleName2">△ZFD</span></div>
+            <div class="triangle-result"><div><div class="formula">S₃ = ½ × L₃ × h</div><div class="base-value">底边 L₃ = <span id="lengthValue2" class="number">156.0</span></div></div><div><span class="area-value number" id="areaValue2">19,500.0</span><small class="area-unit">平方单位</small></div></div>
+          </article>
         </div>
-        <div class="legend">
-            <span><i class="legend-swatch"></i> 三角形阴影</span>
-            <span><i class="legend-swatch h"></i> 高 h1, h2, h3</span>
-            <span>📏 底边分段 L1, L2, L3</span>
+        <div class="sum-card">
+          <div class="sum-heading"><span>三角形面积之和</span><span class="ratio">S₁ + S₂ + S₃</span></div>
+          <div class="sum-number"><span id="sumValue" class="number">65,000.0</span><small>平方单位</small></div>
+          <div class="segments" aria-hidden="true"><span id="segment0" style="background:#8ba8ff;width:30%"></span><span id="segment1" style="background:#6dc9ba;width:40%"></span><span id="segment2" style="background:#efc378;width:30%"></span></div>
+          <div class="sum-foot">平行四边形面积：<span id="parallelogramValue" class="number">130,000.0</span><br>三角形面积之和始终是它的 ½</div>
         </div>
-        <div class="formula-bar" id="formulaBar"></div>
+        <p class="precision-note">计算使用完整精度，数值显示保留 1 位小数。<br>三角形 1 / 2 / 3 按上边顶点从左到右对应。</p>
+      </aside>
     </div>
-    <script>
-        (function() {
-            const canvas = document.getElementById('board');
-            const ctx = canvas.getContext('2d');
-            const W = canvas.width, H = canvas.height;
 
-            // 固定底边y坐标（使底边水平）
-            const BASE_Y = 400;
+    <section class="insight" aria-label="探索提示与面积关系">
+      <div><h2 class="insight-title"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18h6m-5 3h4M8.5 15.5a6 6 0 1 1 7 0c-.7.5-.9 1.4-1 2.5h-5c-.1-1.1-.3-2-1-2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>试着发现</h2><p>只移动 X、Y、Z，三角形的形状会改变，但底和高都没有改变，面积也就保持不变。</p></div>
+      <div><h2 class="insight-title">始终成立的关系</h2><p class="insight-equation">S₁ + S₂ + S₃ = ½ × (L₁ + L₂ + L₃) × h</p><p>三段底边合起来就是 CD，因此阴影总面积是平行四边形面积的一半。</p></div>
+    </section>
+    <footer class="footer"><span>让抽象的关系，成为直观的发现。</span><span>支持鼠标、触摸与键盘 · 无需联网</span></footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <noscript><p style="padding:24px;text-align:center">请启用 JavaScript 后使用拖动、实时计算和图片导出功能。</p></noscript>
 
-            // ----- 所有几何点 -----
-            let A = { x: 250, y: 160 };
-            let B = { x: 650, y: 160 };
-            let C = { x: 200, y: BASE_Y };
-            let D = { x: 700, y: BASE_Y };
+  <script>
+    (() => {
+      'use strict';
 
-            // 底边内两点 E, F
-            let E = { x: 350, y: BASE_Y };
-            let F = { x: 550, y: BASE_Y };
+      // 一、几何模型。共享 width 保证上下边从初始化开始始终等长。
+      const WORLD = Object.freeze({ width: 960, height: 560, baseY: 420, padding: 60, minTop: 110, maxTop: 356, minWidth: 180, gap: 28 });
+      const INITIAL = Object.freeze({ c: 180, width: 520, shift: 60, topY: 170, parts: [0.30, 0.70], apex: { X: 0.15, Y: 0.50, Z: 0.85 } });
+      const TRI_COLORS = ['#5276df', '#168f88', '#c7892b'];
+      const TRI_FILLS = ['rgba(82,118,223,.14)', 'rgba(22,143,136,.14)', 'rgba(211,157,65,.17)'];
+      const SUB = ['₁', '₂', '₃'];
+      const POINT_META = [
+        { id: 'A', color: '#4d7299', label: [-24, 0] },
+        { id: 'B', color: '#4d7299', label: [24, 0] },
+        { id: 'C', color: '#6e819b', label: [-24, 0] },
+        { id: 'D', color: '#6e819b', label: [24, 0] },
+        { id: 'E', color: '#168f88', label: [0, 25] },
+        { id: 'F', color: '#168f88', label: [0, 51] },
+        { id: 'X', color: '#8c68b6', label: [0, -25] },
+        { id: 'Y', color: '#8c68b6', label: [0, -47] },
+        { id: 'Z', color: '#8c68b6', label: [0, -69] }
+      ];
+      const cloneGeometry = source => ({ c: source.c, width: source.width, shift: source.shift, topY: source.topY, parts: [...source.parts], apex: { ...source.apex } });
+      const state = { ...cloneGeometry(INITIAL), selected: 'X', hover: null, fill: true, heights: true, values: true, grid: true };
+      const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+      const numberFormat = new Intl.NumberFormat('zh-CN', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      const format = value => numberFormat.format(Math.abs(value) < 0.00001 ? 0 : value);
+      const canvas = document.getElementById('board');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { document.getElementById('interactionStatus').textContent = '当前浏览器无法创建画布，请使用支持 Canvas 的浏览器。'; return; }
+      const dom = {
+        select: document.getElementById('pointSelect'), status: document.getElementById('interactionStatus'),
+        height: document.getElementById('heightValue'), sum: document.getElementById('sumValue'),
+        parallelogram: document.getElementById('parallelogramValue'), up: document.getElementById('nudgeUp'), down: document.getElementById('nudgeDown'),
+        toast: document.getElementById('toast'), exportButton: document.getElementById('exportBtn'),
+        lengths: [0, 1, 2].map(i => document.getElementById(`lengthValue${i}`)),
+        areas: [0, 1, 2].map(i => document.getElementById(`areaValue${i}`)),
+        names: [0, 1, 2].map(i => document.getElementById(`triangleName${i}`)),
+        segments: [0, 1, 2].map(i => document.getElementById(`segment${i}`))
+      };
+      let view = { width: 960, height: 560, scale: 1, offsetY: 0, dpr: 1 };
+      let drag = null;
+      let pendingPointer = null;
+      let frameId = 0;
+      let toastTimer = 0;
 
-            // 上边内三点 X, Y, Z （严格限制在 A-B 线段上，可与 A/B 重合）
-            let X = { x: 330, y: 160 };
-            let Y = { x: 450, y: 160 };
-            let Z = { x: 570, y: 160 };
+      function getGeometry(source = state) {
+        const a = source.c + source.shift;
+        return {
+          A: { x: a, y: source.topY }, B: { x: a + source.width, y: source.topY },
+          C: { x: source.c, y: WORLD.baseY }, D: { x: source.c + source.width, y: WORLD.baseY },
+          E: { x: source.c + source.parts[0] * source.width, y: WORLD.baseY },
+          F: { x: source.c + source.parts[1] * source.width, y: WORLD.baseY },
+          X: { x: a + source.apex.X * source.width, y: source.topY },
+          Y: { x: a + source.apex.Y * source.width, y: source.topY },
+          Z: { x: a + source.apex.Z * source.width, y: source.topY }
+        };
+      }
 
-            // 拖动状态
-            let dragging = null;
-            let dragType = null;
-            let dragOffsetX = 0, dragOffsetY = 0;
+      function getMeasurements(source = state) {
+        const points = getGeometry(source);
+        // 保留原版按横坐标配对的规则。顶点交叉时，几何连续，底边分段不变。
+        const tops = ['X', 'Y', 'Z'].sort((a, b) => points[a].x - points[b].x);
+        const bottomIds = ['C', 'E', 'F', 'D'];
+        const height = WORLD.baseY - source.topY;
+        const lengths = [points.E.x - points.C.x, points.F.x - points.E.x, points.D.x - points.F.x];
+        const areas = lengths.map(length => length * height / 2);
+        return { points, tops, bottomIds, height, lengths, areas, total: areas.reduce((sum, area) => sum + area, 0), parallelogram: source.width * height };
+      }
 
-            // 获取所有可拖动点
-            function getAllPoints() {
-                return [
-                    { type: 'A', obj: A, color: '#1565c0', label: 'A', radius: 10 },
-                    { type: 'B', obj: B, color: '#1565c0', label: 'B', radius: 10 },
-                    { type: 'C', obj: C, color: '#ff8f2e', label: 'C', radius: 10 },
-                    { type: 'D', obj: D, color: '#ff8f2e', label: 'D', radius: 10 },
-                    { type: 'E', obj: E, color: '#2e7d32', label: 'E', radius: 8 },
-                    { type: 'F', obj: F, color: '#2e7d32', label: 'F', radius: 8 },
-                    { type: 'X', obj: X, color: '#b85c00', label: 'X', radius: 8 },
-                    { type: 'Y', obj: Y, color: '#b85c00', label: 'Y', radius: 8 },
-                    { type: 'Z', obj: Z, color: '#b85c00', label: 'Z', radius: 8 }
-                ];
-            }
+      function constrainPartitions(next) {
+        const e = clamp(next.parts[0] * next.width, WORLD.gap, next.width - 2 * WORLD.gap);
+        const f = clamp(next.parts[1] * next.width, e + WORLD.gap, next.width - WORLD.gap);
+        next.parts = [e / next.width, f / next.width];
+      }
 
-            // 获取鼠标坐标
-            function getMousePos(e) {
-                const rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                let clientX, clientY;
-                if (e.touches) {
-                    clientX = e.touches[0].clientX;
-                    clientY = e.touches[0].clientY;
-                } else {
-                    clientX = e.clientX;
-                    clientY = e.clientY;
-                }
-                return {
-                    x: (clientX - rect.left) * scaleX,
-                    y: (clientY - rect.top) * scaleY
-                };
-            }
+      // 传入 pointerdown 快照，每次由同一个起点计算，避免边界累计误差与回拖漂移。
+      function movePoint(type, x, y, origin = state) {
+        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+        const next = cloneGeometry(origin);
+        if (type === 'A' || type === 'B') {
+          const topLeft = clamp(x - (type === 'B' ? origin.width : 0), WORLD.padding, WORLD.width - WORLD.padding - origin.width);
+          next.shift = topLeft - origin.c;
+          next.topY = clamp(y, WORLD.minTop, WORLD.maxTop);
+        } else if (type === 'C') {
+          const right = origin.c + origin.width;
+          next.c = clamp(x, Math.max(WORLD.padding, WORLD.padding - origin.shift), right - WORLD.minWidth);
+          next.width = right - next.c;
+          constrainPartitions(next);
+        } else if (type === 'D') {
+          const right = clamp(x, origin.c + WORLD.minWidth, Math.min(WORLD.width - WORLD.padding, WORLD.width - WORLD.padding - origin.shift));
+          next.width = right - origin.c;
+          constrainPartitions(next);
+        } else if (type === 'E') {
+          next.parts[0] = clamp(x - origin.c, WORLD.gap, origin.parts[1] * origin.width - WORLD.gap) / origin.width;
+        } else if (type === 'F') {
+          next.parts[1] = clamp(x - origin.c, origin.parts[0] * origin.width + WORLD.gap, origin.width - WORLD.gap) / origin.width;
+        } else if (type === 'X' || type === 'Y' || type === 'Z') {
+          next.apex[type] = clamp((x - origin.c - origin.shift) / origin.width, 0, 1);
+        } else { return; }
+        Object.assign(state, next);
+      }
 
-            // 计算标签偏移（避免与其它点/标签重叠）
-            function getLabelOffset(pointObj, allPoints) {
-                let baseOffset = { x: 12, y: -12 };
-                let offsetX = baseOffset.x;
-                let offsetY = baseOffset.y;
-                const threshold = 32;
-                let collision = false;
-                for (let other of allPoints) {
-                    if (other.obj === pointObj) continue;
-                    const dx = pointObj.x - other.obj.x;
-                    const dy = pointObj.y - other.obj.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < threshold) {
-                        collision = true;
-                        break;
-                    }
-                }
-                if (collision) {
-                    offsetX = 24;
-                    offsetY = -24;
-                }
-                return { x: offsetX, y: offsetY };
-            }
+      // 二、渲染。CSS 尺寸、逻辑坐标、DPR 三者分开，缩放后拖动仍保持一致。
+      const toScreen = (point, targetView = view) => ({ x: point.x * targetView.scale, y: targetView.offsetY + point.y * targetView.scale });
+      const toWorld = (clientX, clientY, rect, targetView = view) => ({ x: (clientX - rect.left) / targetView.scale, y: (clientY - rect.top - targetView.offsetY) / targetView.scale });
 
-            // 更新面积公式显示
-            function updateFormulas() {
-                const bottoms = [C, E, F, D].sort((p1, p2) => p1.x - p2.x);
-                const tops = [X, Y, Z].sort((p1, p2) => p1.x - p2.x);
+      function getLabelLayout(id, point, targetView = view) {
+        const metadata = POINT_META.find(item => item.id === id);
+        const screen = toScreen(point, targetView);
+        // 固定分层位置，不依据邻点距离突然切换方向；重合的顶点也有独立标签。
+        const x = clamp(screen.x + metadata.label[0], 13, targetView.width - 13);
+        const y = clamp(screen.y + metadata.label[1], 13, targetView.height - 13);
+        return { x, y, left: x - 11, top: y - 10, width: 22, height: 20 };
+      }
 
-                const triangles = [
-                    { top: tops[0], left: bottoms[0], right: bottoms[1] },
-                    { top: tops[1], left: bottoms[1], right: bottoms[2] },
-                    { top: tops[2], left: bottoms[2], right: bottoms[3] }
-                ];
+      function roundRect(context, x, y, width, height, radius) {
+        const r = Math.min(radius, width / 2, height / 2);
+        context.beginPath(); context.moveTo(x + r, y); context.lineTo(x + width - r, y);
+        context.quadraticCurveTo(x + width, y, x + width, y + r); context.lineTo(x + width, y + height - r);
+        context.quadraticCurveTo(x + width, y + height, x + width - r, y + height); context.lineTo(x + r, y + height);
+        context.quadraticCurveTo(x, y + height, x, y + height - r); context.lineTo(x, y + r);
+        context.quadraticCurveTo(x, y, x + r, y); context.closePath();
+      }
 
-                const formulaBar = document.getElementById('formulaBar');
-                formulaBar.innerHTML = '';
+      function line(context, from, to, color, width = 1, dash = []) {
+        context.beginPath(); context.moveTo(from.x, from.y); context.lineTo(to.x, to.y);
+        context.strokeStyle = color; context.lineWidth = width; context.setLineDash(dash); context.stroke(); context.setLineDash([]);
+      }
 
-                triangles.forEach((tri, i) => {
-                    const L = Math.abs(tri.right.x - tri.left.x);
-                    const h = Math.abs(tri.top.y - BASE_Y);
-                    const area = 0.5 * L * h;
-                    const LStr = L.toFixed(1);
-                    const hStr = h.toFixed(1);
-                    const areaStr = area.toFixed(1);
+      function badge(context, text, x, y, color, targetView, fill = 'rgba(255,255,255,.94)', fontSize = 11) {
+        context.font = `500 ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif`;
+        const width = context.measureText(text).width + 12;
+        const cx = clamp(x, width / 2 + 3, targetView.width - width / 2 - 3);
+        roundRect(context, cx - width / 2, y - 10, width, 20, 5);
+        context.fillStyle = fill; context.fill(); context.fillStyle = color;
+        context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillText(text, cx, y + .5);
+      }
 
-                    const item = document.createElement('div');
-                    item.className = 'formula-item';
-                    item.innerHTML = `
-                        <span class="tri-label">S▲${i + 1}</span>
-                        = ½ × L${i + 1} × h${i + 1}
-                        = ½ × ${LStr} × ${hStr}
-                        <span class="value">= ${areaStr}</span>
-                    `;
-                    formulaBar.appendChild(item);
-                });
-            }
+      function renderScene(context, targetView, interactive = true) {
+        const { points, tops, bottomIds, height, lengths } = getMeasurements();
+        const screen = Object.fromEntries(Object.entries(points).map(([id, point]) => [id, toScreen(point, targetView)]));
+        context.clearRect(0, 0, targetView.width, targetView.height);
+        context.fillStyle = '#ffffff'; context.fillRect(0, 0, targetView.width, targetView.height);
+        context.lineJoin = 'round'; context.lineCap = 'round';
 
-            // 绘制函数
-            function draw() {
-                ctx.clearRect(0, 0, W, H);
-                const allPoints = getAllPoints();
+        if (state.grid) {
+          context.fillStyle = '#e4eaf1';
+          for (let x = 18; x < targetView.width; x += 22) {
+            for (let y = 18; y < targetView.height; y += 22) { context.beginPath(); context.arc(x, y, .7, 0, Math.PI * 2); context.fill(); }
+          }
+        }
 
-                // 绘制平行四边形边框
-                ctx.beginPath();
-                ctx.moveTo(A.x, A.y);
-                ctx.lineTo(B.x, B.y);
-                ctx.lineTo(D.x, D.y);
-                ctx.lineTo(C.x, C.y);
-                ctx.closePath();
-                ctx.fillStyle = 'rgba(200, 215, 235, 0.15)';
-                ctx.fill();
-                ctx.strokeStyle = '#96aec9';
-                ctx.lineWidth = 2.5;
-                ctx.setLineDash([]);
-                ctx.stroke();
+        context.beginPath();
+        ['A', 'B', 'D', 'C'].forEach((id, index) => index ? context.lineTo(screen[id].x, screen[id].y) : context.moveTo(screen[id].x, screen[id].y));
+        context.closePath(); context.fillStyle = 'rgba(236,242,249,.33)'; context.fill();
+        context.strokeStyle = '#b9c7d9'; context.lineWidth = 1.5; context.stroke();
 
-                // 上边线、底边线加粗
-                ctx.beginPath();
-                ctx.moveTo(A.x, A.y);
-                ctx.lineTo(B.x, B.y);
-                ctx.strokeStyle = '#b0c4de';
-                ctx.lineWidth = 3;
-                ctx.stroke();
+        tops.forEach((id, index) => {
+          const triangle = [screen[id], screen[bottomIds[index]], screen[bottomIds[index + 1]]];
+          context.beginPath(); context.moveTo(triangle[0].x, triangle[0].y);
+          context.lineTo(triangle[1].x, triangle[1].y); context.lineTo(triangle[2].x, triangle[2].y); context.closePath();
+          if (state.fill) { context.fillStyle = TRI_FILLS[index]; context.fill(); }
+          context.lineWidth = 1.4; context.strokeStyle = TRI_COLORS[index]; context.stroke();
+        });
 
-                ctx.beginPath();
-                ctx.moveTo(C.x, C.y);
-                ctx.lineTo(D.x, D.y);
-                ctx.strokeStyle = '#b0c4de';
-                ctx.lineWidth = 3;
-                ctx.stroke();
+        line(context, screen.A, screen.B, '#728cac', 2);
+        line(context, screen.C, screen.D, '#728cac', 2);
 
-                // 排序后的点
-                const bottoms = [C, E, F, D].sort((p1, p2) => p1.x - p2.x);
-                const tops = [X, Y, Z].sort((p1, p2) => p1.x - p2.x);
+        if (state.heights) {
+          tops.forEach((id, index) => {
+            const top = screen[id];
+            const foot = { x: top.x, y: screen.C.y };
+            const left = screen[bottomIds[index]].x;
+            const right = screen[bottomIds[index + 1]].x;
+            if (foot.x < screen.C.x) line(context, foot, screen.C, '#c3cad6', 1, [4, 4]);
+            if (foot.x > screen.D.x) line(context, screen.D, foot, '#c3cad6', 1, [4, 4]);
+            line(context, top, foot, '#cd8490', 1.3, [5, 5]);
+            const direction = foot.x <= (left + right) / 2 ? 1 : -1;
+            const size = Math.min(8, (foot.y - top.y) / 4);
+            context.beginPath(); context.moveTo(foot.x + direction * size, foot.y);
+            context.lineTo(foot.x + direction * size, foot.y - size); context.lineTo(foot.x, foot.y - size);
+            context.strokeStyle = '#cd8490'; context.lineWidth = 1.1; context.stroke();
+            const fraction = [.30, .52, .74][index];
+            const text = state.values && targetView.width > 540 ? `h${SUB[index]} = ${format(height)}` : `h${SUB[index]}`;
+            const labelWidth = state.values && targetView.width > 540 ? 43 : 15;
+            badge(context, text, foot.x + labelWidth + 5, top.y + (foot.y - top.y) * fraction, '#b36677', targetView);
+          });
+        }
 
-                // 三个三角形
-                const triangles = [
-                    [tops[0], bottoms[0], bottoms[1]],
-                    [tops[1], bottoms[1], bottoms[2]],
-                    [tops[2], bottoms[2], bottoms[3]]
-                ];
+        // 尺寸线放在点标签下方，短分段仅标 L，完整数值始终在右侧显示。
+        const dimensionY = Math.min(targetView.height - 18, screen.C.y + 78);
+        for (let index = 0; index < 3; index++) {
+          const left = screen[bottomIds[index]].x;
+          const right = screen[bottomIds[index + 1]].x;
+          line(context, { x: left, y: dimensionY }, { x: right, y: dimensionY }, '#c0cddc');
+          line(context, { x: left, y: dimensionY - 4 }, { x: left, y: dimensionY + 4 }, '#b2c1d3');
+          line(context, { x: right, y: dimensionY - 4 }, { x: right, y: dimensionY + 4 }, '#b2c1d3');
+          const text = state.values && right - left > 95 ? `L${SUB[index]} = ${format(lengths[index])}` : `L${SUB[index]}`;
+          badge(context, text, (left + right) / 2, dimensionY, TRI_COLORS[index], targetView);
+        }
 
-                // 填充三角形阴影
-                triangles.forEach((tri, idx) => {
-                    ctx.beginPath();
-                    ctx.moveTo(tri[0].x, tri[0].y);
-                    ctx.lineTo(tri[1].x, tri[1].y);
-                    ctx.lineTo(tri[2].x, tri[2].y);
-                    ctx.closePath();
-                    const grad = ctx.createLinearGradient(tri[0].x, tri[0].y, tri[2].x, tri[2].y);
-                    if (idx === 0) {
-                        grad.addColorStop(0, 'rgba(72, 130, 200, 0.35)');
-                        grad.addColorStop(1, 'rgba(72, 130, 200, 0.15)');
-                    } else if (idx === 1) {
-                        grad.addColorStop(0, 'rgba(100, 150, 210, 0.35)');
-                        grad.addColorStop(1, 'rgba(100, 150, 210, 0.15)');
-                    } else {
-                        grad.addColorStop(0, 'rgba(128, 170, 220, 0.35)');
-                        grad.addColorStop(1, 'rgba(128, 170, 220, 0.15)');
-                    }
-                    ctx.fillStyle = grad;
-                    ctx.fill();
-                    ctx.strokeStyle = '#3e6a9e';
-                    ctx.lineWidth = 1.8;
-                    ctx.setLineDash([4, 3]);
-                    ctx.stroke();
-                });
-                ctx.setLineDash([]);
+        // 先画标签引线，再画所有圆点，避免靠后的引线盖住圆点。
+        POINT_META.forEach(metadata => {
+          const location = getLabelLayout(metadata.id, points[metadata.id], targetView);
+          line(context, screen[metadata.id], location, `${metadata.color}35`, 1);
+        });
+        const drawOrder = [...POINT_META].sort((a, b) => Number(a.id === state.selected) - Number(b.id === state.selected));
+        drawOrder.forEach(metadata => {
+          const point = screen[metadata.id];
+          const active = interactive && (metadata.id === state.selected || metadata.id === state.hover);
+          if (active) { context.beginPath(); context.arc(point.x, point.y, 11, 0, Math.PI * 2); context.fillStyle = `${metadata.color}18`; context.fill(); }
+          context.beginPath(); context.arc(point.x, point.y, 5.5, 0, Math.PI * 2);
+          context.fillStyle = '#fff'; context.fill(); context.lineWidth = active ? 2.2 : 1.7; context.strokeStyle = metadata.color; context.stroke();
+          context.beginPath(); context.arc(point.x, point.y, active ? 2.4 : 1.8, 0, Math.PI * 2); context.fillStyle = metadata.color; context.fill();
+        });
+        POINT_META.forEach(metadata => {
+          const location = getLabelLayout(metadata.id, points[metadata.id], targetView);
+          const active = interactive && metadata.id === state.selected;
+          roundRect(context, location.left, location.top, location.width, location.height, 5);
+          context.fillStyle = active ? metadata.color : 'rgba(255,255,255,.95)'; context.fill();
+          context.font = '600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+          context.textAlign = 'center'; context.textBaseline = 'middle'; context.fillStyle = active ? '#fff' : metadata.color;
+          context.fillText(metadata.id, location.x, location.y + .5);
+        });
+      }
 
-                // 绘制高、直角符号、高和L的数值
-                for (let i = 0; i < 3; i++) {
-                    const apex = tops[i];
-                    const baseLeft = bottoms[i];
-                    const baseRight = bottoms[i + 1];
-                    const footX = apex.x;
-                    const footY = BASE_Y;
+      function setText(element, value) { if (element.textContent !== value) element.textContent = value; }
 
-                    // 高虚线
-                    ctx.beginPath();
-                    ctx.moveTo(apex.x, apex.y);
-                    ctx.lineTo(footX, footY);
-                    ctx.strokeStyle = '#d32f2f';
-                    ctx.lineWidth = 2.2;
-                    ctx.setLineDash([6, 4]);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
+      function updateReadouts() {
+        const measurements = getMeasurements();
+        setText(dom.height, format(measurements.height));
+        setText(dom.sum, format(measurements.total));
+        setText(dom.parallelogram, format(measurements.parallelogram));
+        measurements.areas.forEach((area, index) => {
+          setText(dom.lengths[index], format(measurements.lengths[index]));
+          setText(dom.areas[index], format(area));
+          setText(dom.names[index], `△${measurements.tops[index]}${measurements.bottomIds[index]}${measurements.bottomIds[index + 1]}`);
+          const width = `${(measurements.lengths[index] / state.width * 100).toFixed(4)}%`;
+          if (dom.segments[index].style.width !== width) dom.segments[index].style.width = width;
+        });
+      }
 
-                    // 直角符号
-                    const size = 10;
-                    ctx.beginPath();
-                    ctx.moveTo(footX, footY);
-                    ctx.lineTo(footX + size, footY);
-                    ctx.moveTo(footX, footY);
-                    ctx.lineTo(footX, footY - size);
-                    ctx.strokeStyle = '#d32f2f';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+      function render() {
+        ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
+        renderScene(ctx, view);
+        updateReadouts();
+      }
 
-                    // h 数值
-                    const h = Math.abs(apex.y - footY);
-                    const hStr = h.toFixed(1);
-                    ctx.font = 'bold 15px "Segoe UI", Roboto, sans-serif';
-                    ctx.fillStyle = '#d32f2f';
-                    ctx.shadowColor = 'white';
-                    ctx.shadowBlur = 4;
-                    const midX = (apex.x + footX) / 2 + 10;
-                    const midY = (apex.y + footY) / 2;
-                    ctx.fillText(`h${i+1}=${hStr}`, midX, midY - 6);
+      function requestRender() {
+        if (frameId) return;
+        frameId = requestAnimationFrame(() => { frameId = 0; applyPendingDrag(); render(); });
+      }
 
-                    // L 数值
-                    const L = Math.abs(baseRight.x - baseLeft.x);
-                    const LStr = L.toFixed(1);
-                    const segMidX = (baseLeft.x + baseRight.x) / 2;
-                    const segMidY = BASE_Y - 14;
-                    ctx.font = 'bold 15px "Segoe UI", Roboto, sans-serif';
-                    ctx.fillStyle = '#2e7d32';
-                    ctx.shadowColor = 'white';
-                    ctx.shadowBlur = 4;
-                    ctx.fillText(`L${i+1}=${LStr}`, segMidX - 30, segMidY);
-                }
+      function resizeCanvas() {
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 3);
+        if (Math.abs(rect.width - view.width) < .01 && Math.abs(rect.height - view.height) < .01 && dpr === view.dpr) { requestRender(); return; }
+        cancelDrag();
+        const scale = rect.width / WORLD.width;
+        view = { width: rect.width, height: rect.height, scale, offsetY: (rect.height - WORLD.height * scale) / 2, dpr };
+        const pixelWidth = Math.round(rect.width * dpr);
+        const pixelHeight = Math.round(rect.height * dpr);
+        if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+        if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
+        requestRender();
+      }
 
-                ctx.shadowColor = 'transparent';
+      // 三、交互。Pointer Events 统一鼠标/触摸/笔，捕获并锁定同一个 pointerId。
+      function hitTest(localX, localY, pointerType = 'mouse') {
+        const points = getGeometry();
+        const radius = pointerType === 'touch' ? 22 : 14;
+        const candidates = POINT_META.map(metadata => {
+          const point = toScreen(points[metadata.id]);
+          return { id: metadata.id, distance: Math.hypot(point.x - localX, point.y - localY) };
+        }).filter(item => item.distance <= radius).sort((a, b) => a.distance - b.distance);
+        // 窄屏边缘的字母可能贴近圆点。点击共享圆点时，优先操作明确选中的点。
+        const selectedAtHandle = candidates.find(item => item.id === state.selected && item.distance <= 8 && item.distance <= candidates[0].distance + 1.5);
+        if (selectedAtHandle) return selectedAtHandle.id;
+        const labels = POINT_META.filter(metadata => {
+          const label = getLabelLayout(metadata.id, points[metadata.id]);
+          return localX >= label.left - 2 && localX <= label.left + label.width + 2 && localY >= label.top - 2 && localY <= label.top + label.height + 2;
+        });
+        if (labels.length) return (labels.find(metadata => metadata.id === state.selected) || labels[0]).id;
+        if (!candidates.length) return null;
+        const selected = candidates.find(item => item.id === state.selected && item.distance <= candidates[0].distance + 1.5);
+        return (selected || candidates[0]).id;
+      }
 
-                // 绘制所有点及标签（标签根据距离自动偏移）
-                allPoints.forEach(item => {
-                    const { obj, color, label, radius } = item;
-                    // 光晕
-                    ctx.beginPath();
-                    ctx.arc(obj.x, obj.y, radius + 4, 0, 2 * Math.PI);
-                    ctx.fillStyle = color + '25';
-                    ctx.fill();
-                    // 实心圆
-                    ctx.beginPath();
-                    ctx.arc(obj.x, obj.y, radius, 0, 2 * Math.PI);
-                    ctx.fillStyle = color;
-                    ctx.shadowColor = 'rgba(0,0,0,0.2)';
-                    ctx.shadowBlur = 8;
-                    ctx.fill();
-                    ctx.shadowColor = 'transparent';
-                    // 白色内圈
-                    ctx.beginPath();
-                    ctx.arc(obj.x, obj.y, radius - 2, 0, 2 * Math.PI);
-                    ctx.fillStyle = '#ffffffd0';
-                    ctx.fill();
-                    // 中心小点
-                    ctx.beginPath();
-                    ctx.arc(obj.x, obj.y, 3, 0, 2 * Math.PI);
-                    ctx.fillStyle = color;
-                    ctx.fill();
+      function updateSelection() {
+        dom.select.value = state.selected;
+        const vertical = state.selected === 'A' || state.selected === 'B';
+        dom.up.disabled = !vertical; dom.down.disabled = !vertical;
+        const description = vertical ? '联动移动上边，调整高度与倾斜程度。' :
+          ['C', 'D'].includes(state.selected) ? '水平调整底边长度，上下边保持等长。' :
+          ['E', 'F'].includes(state.selected) ? '沿底边滑动，调整三个三角形的底边分配。' :
+          '沿上边滑动，可与其他顶点或端点重合。';
+        setText(dom.status, `${drag ? '正在拖动' : '已选择'} ${state.selected}：${description}`);
+      }
 
-                    // 标签偏移
-                    const offset = getLabelOffset(obj, allPoints);
-                    const labelX = obj.x + offset.x;
-                    const labelY = obj.y + offset.y;
+      function beginDrag(event) {
+        if (drag || event.button !== 0 || event.isPrimary === false) return;
+        const rect = canvas.getBoundingClientRect();
+        const type = hitTest(event.clientX - rect.left, event.clientY - rect.top, event.pointerType);
+        if (!type) return;
+        event.preventDefault();
+        state.selected = type; state.hover = type;
+        canvas.focus({ preventScroll: true });
+        const start = toWorld(event.clientX, event.clientY, rect);
+        const origin = cloneGeometry(state);
+        drag = { pointerId: event.pointerId, type, start, point: getGeometry(origin)[type], origin, rect, view: { ...view } };
+        pendingPointer = null;
+        try { canvas.setPointerCapture(event.pointerId); } catch (_) { /* window 事件仍可结束拖动。 */ }
+        canvas.classList.add('is-dragging'); canvas.style.cursor = 'grabbing';
+        updateSelection(); requestRender();
+      }
 
-                    // 绘制字母
-                    ctx.font = 'bold 18px "Segoe UI", Roboto, sans-serif';
-                    ctx.fillStyle = color;
-                    ctx.shadowColor = 'white';
-                    ctx.shadowBlur = 6;
-                    ctx.fillText(label, labelX, labelY);
-                    ctx.shadowColor = 'transparent';
-                });
+      function applyPendingDrag() {
+        if (!drag || !pendingPointer) return;
+        const current = toWorld(pendingPointer.clientX, pendingPointer.clientY, drag.rect, drag.view);
+        movePoint(drag.type, drag.point.x + current.x - drag.start.x, drag.point.y + current.y - drag.start.y, drag.origin);
+        pendingPointer = null;
+      }
 
-                // 更新下方公式
-                updateFormulas();
-            }
+      function handlePointerMove(event) {
+        if (drag) {
+          if (event.pointerId !== drag.pointerId) return;
+          if (event.pointerType === 'mouse' && event.buttons === 0) { finishDrag(event); return; }
+          event.preventDefault();
+          pendingPointer = { clientX: event.clientX, clientY: event.clientY };
+          requestRender();
+        } else if (event.target === canvas) {
+          const rect = canvas.getBoundingClientRect();
+          const hovered = hitTest(event.clientX - rect.left, event.clientY - rect.top, event.pointerType);
+          if (state.hover !== hovered) {
+            state.hover = hovered; canvas.style.cursor = hovered ? 'grab' : 'default'; requestRender();
+          }
+        }
+      }
 
-            // 检测点击（点本身或标签）
-            function onPointerDown(e) {
-                e.preventDefault();
-                const { x, y } = getMousePos(e);
-                const all = getAllPoints();
-                let hit = null;
-                let minDist = 30;
+      function releaseDrag() {
+        if (!drag) return;
+        const pointerId = drag.pointerId;
+        drag = null; pendingPointer = null; state.hover = null;
+        canvas.classList.remove('is-dragging'); canvas.style.cursor = 'default';
+        try { if (canvas.hasPointerCapture(pointerId)) canvas.releasePointerCapture(pointerId); } catch (_) { /* 指针已由浏览器释放。 */ }
+        updateSelection(); requestRender();
+      }
 
-                all.forEach(item => {
-                    const dx = x - item.obj.x;
-                    const dy = y - item.obj.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
+      function finishDrag(event) {
+        if (!drag || event.pointerId !== drag.pointerId) return;
+        // pointerup 也带有最终位置，必须提交，避免末帧尚未绘制就丢失。
+        if (Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) pendingPointer = { clientX: event.clientX, clientY: event.clientY };
+        applyPendingDrag(); releaseDrag();
+      }
 
-                    const offset = getLabelOffset(item.obj, all);
-                    const labelX = item.obj.x + offset.x;
-                    const labelY = item.obj.y + offset.y;
-                    const labelDist = Math.sqrt((x - labelX)**2 + (y - labelY)**2);
+      function cancelDrag(restore = false) {
+        if (!drag) return;
+        if (restore) Object.assign(state, cloneGeometry(drag.origin));
+        pendingPointer = null; releaseDrag();
+      }
 
-                    const effectiveDist = Math.min(dist, labelDist);
-                    if (effectiveDist < minDist) {
-                        minDist = effectiveDist;
-                        hit = item;
-                    }
-                });
+      function nudge(dx, dy, step = 2) {
+        if (dy && state.selected !== 'A' && state.selected !== 'B') return;
+        cancelDrag();
+        const point = getGeometry()[state.selected];
+        movePoint(state.selected, point.x + dx * step, point.y + dy * step);
+        requestRender();
+      }
 
-                if (hit) {
-                    dragging = hit.obj;
-                    dragType = hit.type;
-                    dragOffsetX = x - hit.obj.x;
-                    dragOffsetY = y - hit.obj.y;
-                    canvas.style.cursor = 'grabbing';
-                }
-            }
+      canvas.addEventListener('pointerdown', beginDrag);
+      window.addEventListener('pointermove', handlePointerMove, { passive: false });
+      window.addEventListener('pointerup', finishDrag);
+      window.addEventListener('pointercancel', event => { if (drag && event.pointerId === drag.pointerId) cancelDrag(); });
+      canvas.addEventListener('lostpointercapture', event => { if (drag && event.pointerId === drag.pointerId) cancelDrag(); });
+      canvas.addEventListener('pointerleave', () => { if (!drag && state.hover) { state.hover = null; canvas.style.cursor = 'default'; requestRender(); } });
+      canvas.addEventListener('dragstart', event => event.preventDefault());
+      window.addEventListener('blur', () => cancelDrag());
+      window.addEventListener('scroll', () => cancelDrag(), { passive: true, capture: true });
+      document.addEventListener('visibilitychange', () => { if (document.hidden) cancelDrag(); });
+      canvas.addEventListener('keydown', event => {
+        if (event.key === 'Escape') { cancelDrag(true); return; }
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+        if (directions[event.key]) { event.preventDefault(); nudge(...directions[event.key], event.shiftKey ? 10 : 2); }
+      });
+      dom.select.addEventListener('change', () => { cancelDrag(); state.selected = dom.select.value; updateSelection(); requestRender(); });
+      [['nudgeLeft', -1, 0], ['nudgeRight', 1, 0], ['nudgeUp', 0, -1], ['nudgeDown', 0, 1]].forEach(([id, dx, dy]) => {
+        document.getElementById(id).addEventListener('click', () => nudge(dx, dy));
+      });
+      [['showFill', 'fill'], ['showHeights', 'heights'], ['showValues', 'values'], ['showGrid', 'grid']].forEach(([id, key]) => {
+        document.getElementById(id).addEventListener('change', event => { state[key] = event.target.checked; requestRender(); });
+      });
 
-            // 拖动中
-            function onPointerMove(e) {
-                if (!dragging) return;
-                e.preventDefault();
-                const { x, y } = getMousePos(e);
-                let newX = x - dragOffsetX;
-                let newY = y - dragOffsetY;
+      function showToast(message) {
+        clearTimeout(toastTimer); setText(dom.toast, message); dom.toast.hidden = false;
+        toastTimer = setTimeout(() => { dom.toast.hidden = true; }, 3200);
+      }
 
-                // 边界限制
-                newX = Math.min(W - 30, Math.max(30, newX));
-                newY = Math.min(H - 30, Math.max(30, newY));
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        cancelDrag(); Object.assign(state, cloneGeometry(INITIAL), { selected: 'X', hover: null });
+        updateSelection(); requestRender(); showToast('图形已恢复初始位置');
+      });
 
-                const type = dragType;
+      // 四、导出使用独立的 3 倍画布，避免改变当前画布尺寸或打断显示。
+      dom.exportButton.addEventListener('click', () => {
+        applyPendingDrag(); cancelDrag();
+        const exportCanvas = document.createElement('canvas');
+        const ratio = 3;
+        exportCanvas.width = WORLD.width * ratio; exportCanvas.height = (WORLD.height + 110) * ratio;
+        const exportContext = exportCanvas.getContext('2d');
+        if (!exportContext) { showToast('无法创建导出画布，请重试。'); return; }
+        dom.exportButton.disabled = true;
+        try {
+          exportContext.scale(ratio, ratio);
+          exportContext.fillStyle = '#fff'; exportContext.fillRect(0, 0, WORLD.width, WORLD.height + 110);
+          exportContext.fillStyle = '#2d485a'; exportContext.font = '600 22px "Microsoft YaHei", sans-serif';
+          exportContext.fillText('平行四边形与三角形 · 高与面积', 30, 39);
+          exportContext.save(); exportContext.translate(0, 60);
+          renderScene(exportContext, { width: WORLD.width, height: WORLD.height, scale: 1, offsetY: 0, dpr: 1 }, false);
+          exportContext.restore();
+          const measurements = getMeasurements();
+          exportContext.fillStyle = '#667b91'; exportContext.font = '13px "Microsoft YaHei", sans-serif';
+          exportContext.fillText(`h = ${format(measurements.height)}    S₁ = ${format(measurements.areas[0])}    S₂ = ${format(measurements.areas[1])}    S₃ = ${format(measurements.areas[2])}    面积之和 = ${format(measurements.total)}`, 30, WORLD.height + 84);
+          exportCanvas.toBlob(blob => {
+            dom.exportButton.disabled = false;
+            if (!blob) { showToast('图片生成失败，请重试。'); return; }
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url; link.download = '平行四边形与三角形_高清.png';
+            document.body.appendChild(link); link.click(); link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+            showToast('高清图片已生成（2880 × 2010）');
+          }, 'image/png');
+        } catch (_) { dom.exportButton.disabled = false; showToast('图片导出失败，请重试或使用浏览器截图。'); }
+      });
 
-                // ===== 处理 A, B：联动保持平行四边形 =====
-                if (type === 'A' || type === 'B') {
-                    const baseLength = Math.abs(D.x - C.x);
-
-                    if (type === 'A') {
-                        A.x = newX;
-                        A.y = newY;
-                        B.y = A.y;
-                        B.x = A.x + baseLength;
-                    } else {
-                        B.x = newX;
-                        B.y = newY;
-                        A.y = B.y;
-                        A.x = B.x - baseLength;
-                    }
-
-                    // X,Y,Z 的 y 坐标跟随上边高度，x 坐标限制在 A-B 之间
-                    const minX = Math.min(A.x, B.x);
-                    const maxX = Math.max(A.x, B.x);
-                    [X, Y, Z].forEach(p => {
-                        p.y = A.y;
-                        p.x = Math.min(maxX, Math.max(minX, p.x));
-                    });
-                }
-
-                // ===== 处理 C, D =====
-                if (type === 'C' || type === 'D') {
-                    if (type === 'C') {
-                        C.x = Math.min(D.x - 60, Math.max(40, newX));
-                        C.y = BASE_Y;
-                    } else {
-                        D.x = Math.max(C.x + 60, Math.min(W - 40, newX));
-                        D.y = BASE_Y;
-                    }
-                    // E, F 限制在 C-D 之间（保持底边内滑动）
-                    const leftX = Math.min(C.x, D.x) + 30;
-                    const rightX = Math.max(C.x, D.x) - 30;
-                    [E, F].forEach(p => {
-                        p.y = BASE_Y;
-                        p.x = Math.min(rightX, Math.max(leftX, p.x));
-                    });
-                }
-
-                // ===== 处理 E, F（限制在 C-D 之间水平滑动）=====
-                if (type === 'E' || type === 'F') {
-                    let nx = Math.min(D.x - 30, Math.max(C.x + 30, newX));
-                    if (type === 'E') {
-                        nx = Math.min(F.x - 20, nx);
-                        E.x = nx;
-                        E.y = BASE_Y;
-                    } else {
-                        nx = Math.max(E.x + 20, nx);
-                        F.x = nx;
-                        F.y = BASE_Y;
-                    }
-                }
-
-                // ===== 处理 X, Y, Z：严格限制在 A-B 线段上滑动（可与 A/B 重合）=====
-                if (['X', 'Y', 'Z'].includes(type)) {
-                    const topY = A.y;
-                    const minX = Math.min(A.x, B.x);
-                    const maxX = Math.max(A.x, B.x);
-                    // 将 x 限制在 [minX, maxX] 之间，y 强制与上边一致
-                    let nx = Math.min(maxX, Math.max(minX, newX));
-                    if (type === 'X') {
-                        X.x = nx;
-                        X.y = topY;
-                    } else if (type === 'Y') {
-                        Y.x = nx;
-                        Y.y = topY;
-                    } else { // Z
-                        Z.x = nx;
-                        Z.y = topY;
-                    }
-                    // 注意：不强制 X < Y < Z 的顺序，允许它们重合或交换位置，
-                    // 因为绘制三角形时会按 x 坐标自动排序，所以顺序不影响几何正确性。
-                }
-
-                draw();
-            }
-
-            function onPointerUp() {
-                if (dragging) {
-                    dragging = null;
-                    dragType = null;
-                    canvas.style.cursor = 'grab';
-                }
-            }
-
-            // 初始化
-            B.y = A.y;
-            C.y = BASE_Y;
-            D.y = BASE_Y;
-            E.y = BASE_Y;
-            F.y = BASE_Y;
-            X.y = A.y;
-            Y.y = A.y;
-            Z.y = A.y;
-
-            // 事件绑定
-            canvas.addEventListener('mousedown', onPointerDown);
-            window.addEventListener('mousemove', onPointerMove);
-            window.addEventListener('mouseup', onPointerUp);
-
-            canvas.addEventListener('touchstart', onPointerDown, { passive: false });
-            window.addEventListener('touchmove', onPointerMove, { passive: false });
-            window.addEventListener('touchend', onPointerUp);
-            window.addEventListener('touchcancel', onPointerUp);
-
-            draw();
-
-        })();
-    </script>
+      if ('ResizeObserver' in window) {
+        const resizeObserver = new ResizeObserver(resizeCanvas);
+        resizeObserver.observe(canvas);
+      }
+      // 宽屏居中布局可能只改变画布位置、没有改变尺寸，也必须终止旧坐标快照。
+      window.addEventListener('resize', () => { cancelDrag(); resizeCanvas(); }, { passive: true });
+      // 屏幕 DPR 改变（如把窗口移到另一块屏幕）时重新生成清晰的 backing store。
+      let dprQuery = null;
+      function watchDpr() {
+        if (!window.matchMedia) return;
+        if (dprQuery) {
+          if (dprQuery.removeEventListener) dprQuery.removeEventListener('change', handleDprChange);
+          else if (dprQuery.removeListener) dprQuery.removeListener(handleDprChange);
+        }
+        dprQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio || 1}dppx)`);
+        if (dprQuery.addEventListener) dprQuery.addEventListener('change', handleDprChange);
+        else if (dprQuery.addListener) dprQuery.addListener(handleDprChange);
+      }
+      function handleDprChange() { resizeCanvas(); watchDpr(); }
+      updateSelection(); resizeCanvas(); watchDpr();
+    })();
+  </script>
 </body>
 </html>
